@@ -1,0 +1,78 @@
+<script
+        src="http://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous">
+
+</script>
+<script>
+    $(document).ready(function () {
+        var mapMarkers = g_gmlAllMaps[0]._markers;
+        var i = 0, len = mapMarkers.length;
+        for(i; i < len; i++){
+            (function(idx) {
+                mapMarkers[idx]._markerObj.addListener('click', function(){displayStory(mapMarkers[idx]._markerObj.id);});
+            })(i);
+        }
+        loadDefaultPage();
+
+        function displayStory(id){
+            if(id){
+                loadDefaultPage();
+                $.get('http://firesteelwa.org/fp' + id + '?json=1', function(data){
+                    if(data.page.content){
+                        $('#myframe').html('<h1>Hi</h1>');
+                        $('#myframe').html(data.page.content);
+                    }
+                    else{
+                        loadDefaultPage();
+                    }
+                });
+            }
+            else {
+                loadDefaultPage();
+            }
+        }
+        function loadDefaultPage(){
+            $.get('http://firesteelwa.org/fpdefault' + '?json=1', function(data){
+                if(data.page.content){
+                    $('#myframe').html(data.page.content);
+                }
+                else {
+                    $('#myframe').html('<h1>No Details provided for this location</h1>');
+                }
+            });
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var map = g_gmlAllMaps[0]._mapObj
+
+        // Bounds for The Great State of Washington
+        var strictBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(45.67, -123.78),
+                new google.maps.LatLng(48.849590, -117.130344)
+        );
+
+        // Listen for the dragend event
+        google.maps.event.addListener(map, 'dragend', function() {
+            if (strictBounds.contains(map.getCenter())) return;
+            // We're out of bounds - Move the map back within the bounds
+
+            var c = map.getCenter(),
+                    x = c.lng(),
+                    y = c.lat(),
+                    maxX = strictBounds.getNorthEast().lng(),
+                    maxY = strictBounds.getNorthEast().lat(),
+                    minX = strictBounds.getSouthWest().lng(),
+                    minY = strictBounds.getSouthWest().lat();
+
+            if (x < minX) x = minX;
+            if (x > maxX) x = maxX;
+            if (y < minY) y = minY;
+            if (y > maxY) y = maxY;
+
+            map.setCenter(new google.maps.LatLng(y, x));
+        });
+    });
+</script>
