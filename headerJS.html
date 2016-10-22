@@ -29,15 +29,11 @@ If http://firesteelwa.org/fp + id returns data, the data is used to replace the 
          */
         function displayStory(id){
             if(id){
-                loadDefaultPage();
-                $.get('http://firesteelwa.org/fp' + id + '?json=1', function(data){
-                    if(data.page.content){
-                        $('#myframe').html('<h1>Hi</h1>');
-                        $('#myframe').html(data.page.content);
-                    }
+                ajaxGetJson('http://firesteelwa.org/fp' + id + '?json=1', function(err, data){
+                   if(err) loadDefaultPage();
                     else{
-                        loadDefaultPage();
-                    }
+                       $('#myframe').html(data.json.page.content);
+                   }
                 });
             }
             else {
@@ -48,9 +44,10 @@ If http://firesteelwa.org/fp + id returns data, the data is used to replace the 
 If http://firesteelwa.org/fpdefault returns data, it is used to replace the HTML in the element with the id of 'myframe' else a fallback message is used to replace the HTML.
          */
         function loadDefaultPage(){
-            $.get('http://firesteelwa.org/fpdefault' + '?json=1', function(data){
-                if(data.page.content){
-                    $('#myframe').html(data.page.content);
+            ajaxGetJson('http://firesteelwa.org/fpdefault' + '?json=1', function(err, data){
+               if(err) console.log(err);
+                if(data.json.page.content){
+                    $('#myframe').html(data.json.page.content);
                 }
                 else {
                     $('#myframe').html('<h1>No Details provided for this location</h1>');
@@ -90,5 +87,26 @@ Sets the boundaries of the map with the index of mapIdx to LatLng(45.67, -123.78
             });
         }
 
+        function ajaxGetJson(url, cb, token){
+            var ajaxReq = new XMLHttpRequest();
+            ajaxReq.addEventListener('load', function(){
+                if(ajaxReq.status === 200) cb(null, {json: JSON.parse(ajaxReq.responseText), rawAjaxRequest: ajaxReq});
+                else cb({statusCode: ajaxReq.status, rawAjaxRequest: ajaxReq}, null);
+            });
+            ajaxReq.addEventListener('error', function(data){
+                console.dir(data);
+                var err = new Error('A fatal error occurred during ajaxGetJson, see console for more information');
+                err.name = 'XMLHttpRequestError';
+                cb(err, null);
+            });
+
+//Must open before setting request header, so this order is required
+            ajaxReq.open('GET', url, true);
+            //ajaxReq.setRequestHeader('Content-Type', 'application/json');
+            if(token){
+                ajaxReq.setRequestHeader('Authorization', token);
+            }
+            ajaxReq.send();
+        }
     });
 </script>
