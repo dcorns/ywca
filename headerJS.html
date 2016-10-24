@@ -9,11 +9,11 @@
         addMarkerClickEvents(0, displayStory);
         loadDefaultPage();
         lockMapArea(0);
-/*addMarkerClickEvents
-mapIdx=Int
-fn = function
-Adds a click event handler to all markers associated with the given map index (mapIdx) that will call fn with the marker id (mapMarkers[i]._markerObj.id).
- */
+        /*addMarkerClickEvents
+         mapIdx=Int
+         fn = function
+         Adds a click event handler to all markers associated with the given map index (mapIdx) that will call fn with the marker id (mapMarkers[i]._markerObj.id).
+         */
         function addMarkerClickEvents(mapIdx, fn){
             var mapMarkers = g_gmlAllMaps[mapIdx]._markers;
             var i = 0, len = mapMarkers.length;
@@ -23,29 +23,29 @@ Adds a click event handler to all markers associated with the given map index (m
                 })(i);
             }
         }
-/*displayStory
-id = Int
-If http://firesteelwa.org/fp + id returns data, the data is used to replace the HTML in element with the id of 'myframe' else the loadDefaultPage is called (note that 'myframe' and 'http://firesteelwa.org/fp' should be replaced parameters to decouple)
+        /*displayStory
+         id = Int
+         If http://firesteelwa.org/fp + id returns data, the data is used to replace the HTML in element with the id of 'myframe' else the loadDefaultPage is called (note that 'myframe' and 'http://firesteelwa.org/fp' should be replaced parameters to decouple)
          */
         function displayStory(id){
             if(id){
                 ajaxGetJson('http://firesteelwa.org/fp' + id + '?json=1', function(err, data){
-                   if(err) loadDefaultPage();
+                    if(err) loadDefaultPage();
                     else{
-                       $('#myframe').html(data.json.page.content);
-                   }
+                        $('#myframe').html(data.json.page.content);
+                    }
                 });
             }
             else {
                 loadDefaultPage();
             }
         }
-/*loadDefaultPage
-If http://firesteelwa.org/fpdefault returns data, it is used to replace the HTML in the element with the id of 'myframe' else a fallback message is used to replace the HTML.
+        /*loadDefaultPage
+         If http://firesteelwa.org/fpdefault returns data, it is used to replace the HTML in the element with the id of 'myframe' else a fallback message is used to replace the HTML.
          */
         function loadDefaultPage(){
             ajaxGetJson('http://firesteelwa.org/fpdefault' + '?json=1', function(err, data){
-               if(err) console.log(err);
+                if(err) console.log(err);
                 if(data.json.page.content){
                     $('#myframe').html(data.json.page.content);
                 }
@@ -54,9 +54,9 @@ If http://firesteelwa.org/fpdefault returns data, it is used to replace the HTML
                 }
             });
         }
-/*lockMapArea (original code by James Gifford refactored by Dale Corns
-mapIdx = Int
-Sets the boundaries of the map with the index of mapIdx to LatLng(45.67, -123.78) and LatLng(48.849590, -117.130344)
+        /*lockMapArea (original code by James Gifford refactored by Dale Corns
+         mapIdx = Int
+         Sets the boundaries of the map with the index of mapIdx to LatLng(45.67, -123.78) and LatLng(48.849590, -117.130344)
          */
         function lockMapArea(mapIdx){
             var map = g_gmlAllMaps[mapIdx]._mapObj, googMaps = google.maps;
